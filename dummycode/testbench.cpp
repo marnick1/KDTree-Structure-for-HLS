@@ -65,7 +65,7 @@ CCS_MAIN(int argc, char* argv[]){
 
   // Clear the tree
   opcode = 0;
-  run(opcode, data_in, data_out, memory, stack_mem);
+  run<arr_size>(opcode, data_in, data_out, memory, stack_mem);
   printNode(memory[0], 0);
   std::cout << std:: endl;
 
@@ -81,7 +81,7 @@ CCS_MAIN(int argc, char* argv[]){
     std::cout << "Inserting node ";
     printNode(data_in.element[0], 0);
     std::cout << std::endl;
-    run(opcode, data_in, data_out, memory, stack_mem);
+    run<arr_size>(opcode, data_in, data_out, memory, stack_mem);
   }
   // Printing Results
   printTree(memory);
@@ -91,7 +91,7 @@ CCS_MAIN(int argc, char* argv[]){
   std::cout << "Removing node ";
   printNode(data_in.element[0], 0);
   std::cout << std::endl;
-  run(opcode, data_in, data_out, memory, stack_mem);
+  run<arr_size>(opcode, data_in, data_out, memory, stack_mem);
   // Printing Results
   printTree(memory);
 
@@ -102,7 +102,7 @@ CCS_MAIN(int argc, char* argv[]){
   std::cout << "Search for node ";
   printNode(data_in.element[0], 0);
   std::cout << std::endl;
-  run(opcode, data_in, data_out, memory, stack_mem);
+  run<arr_size>(opcode, data_in, data_out, memory, stack_mem);
   // Printing Results
   std::cout << "Node position: " << data_out.num << std::endl;
 
@@ -111,7 +111,7 @@ CCS_MAIN(int argc, char* argv[]){
   std::cout << "Removing node ";
   printNode(data_in.element[0], 0);
   std::cout << std::endl;
-  run(opcode, data_in, data_out, memory, stack_mem);
+  run<arr_size>(opcode, data_in, data_out, memory, stack_mem);
   // Printing Results
   printTree(memory);
 
@@ -120,7 +120,7 @@ CCS_MAIN(int argc, char* argv[]){
   std::cout << "Inserting dummy node ";
   printNode(data_in.element[0], 0);
   std::cout << std::endl;
-  run(opcode, data_in, data_out, memory, stack_mem);
+  run<arr_size>(opcode, data_in, data_out, memory, stack_mem);
   // Printing Results
   std::cout << "Dummy position: " << data_out.num << std::endl;
 
@@ -129,7 +129,7 @@ CCS_MAIN(int argc, char* argv[]){
   std::cout << "Search for node ";
   printNode(data_in.element[0], 0);
   std::cout << std::endl;
-  run(opcode, data_in, data_out, memory, stack_mem);
+  run<arr_size>(opcode, data_in, data_out, memory, stack_mem);
   // Printing Results
   std::cout << "Node position: " << data_out.num << std::endl;
 
@@ -141,7 +141,7 @@ CCS_MAIN(int argc, char* argv[]){
   std::cout << "Range search of radius^2 " << data_in.num << " for node ";
   printNode(data_in.element[0], 0);
   std::cout << std::endl;
-  run(opcode, data_in, data_out, memory, stack_mem);
+  run<arr_size>(opcode, data_in, data_out, memory, stack_mem);
   // Printing Results
   std::cout << data_out.num << " neighbors found:" << std::endl;
   for(int i=0; i<data_out.num; ++i){
@@ -156,7 +156,7 @@ CCS_MAIN(int argc, char* argv[]){
   std::cout << "Nearest neighbor of node ";
   printNode(data_in.element[0], 0);
   std::cout << std::endl;
-  run(opcode, data_in, data_out, memory, stack_mem);
+  run<arr_size>(opcode, data_in, data_out, memory, stack_mem);
   // Printing Results
   printNode(data_out.element[0], 0);
   std::cout << " Distance^2: " << data_out.num << std::endl;

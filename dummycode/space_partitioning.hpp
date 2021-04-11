@@ -2,9 +2,14 @@
 #define SPACE_PARTITIONING_STRUCTURE
 
 #include "kdtree.hpp"
+#include "ac_channel.h"
+
+//enum
+
 
 #pragma hls_design top
-void CCS_BLOCK(run)(op& opcode, sd<1>& d_in, sd<size>& d_out, node* memory, int* mem){
+template<int A>
+void CCS_BLOCK(run)(op& opcode, sd<1>& d_in, sd<size>& d_out, node memory[A], int mem[A]){
   static kd_tree mytree(memory, mem);
   switch(opcode) {
     case 0: {

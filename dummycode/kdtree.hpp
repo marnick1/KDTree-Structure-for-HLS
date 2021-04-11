@@ -108,28 +108,26 @@ void kd_tree::insert_element(node& d_in){
         plane.is_leaf = false;
         plane.coords[axis] = (d_in.coords[axis] + cur_node.coords[axis])>>1;
         // Move both leafs down on different sides
+        plane.has_right = true;
+        plane.has_left = true;
         if ((cur_node.coords[axis] > plane.coords[axis]) && (d_in.coords[axis] <= plane.coords[axis])){
-          plane.has_right = true;
-          plane.has_left = true;
           mytree[cur_pos] = plane;                      // parent
           mytree[right_child(cur_pos)] = cur_node;      // child 1
           mytree[left_child(cur_pos)] = d_in;           // child 2
           break;
         } else if ((cur_node.coords[axis] <= plane.coords[axis]) && (d_in.coords[axis] > plane.coords[axis])){
-          plane.has_right = true;
-          plane.has_left = true;
           mytree[cur_pos] = plane;                      // parent
           mytree[left_child(cur_pos)] = cur_node;       // child 1
           mytree[right_child(cur_pos)] = d_in;          // child 2
           break;
         } else {                    // both leafs left(equal value on axis)
           plane.has_right = false;
-          plane.has_left = true;
           mytree[cur_pos] = plane;                  // parent
           mytree[left_child(cur_pos)] = cur_node;   // child 1
           cur_pos = left_child(cur_pos);
           depth += 1;
         }
+
       }
     } else {            // --------------partitioning plane--------------
       if (cur_node.has_left || cur_node.has_right){

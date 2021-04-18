@@ -1,8 +1,12 @@
 #ifndef KD_TREE_STRUCTURE
 #define KD_TREE_STRUCTURE
 
+#include <iostream>
+
 #include "ac_integers.hpp"
 #include "ac_channels.hpp"
+
+#include "mc_scverify.h"
 
 #include "stack.hpp"
 #include "node.hpp"
@@ -23,7 +27,7 @@ UInt dist(Node& a, Node& b){
 }
 
 // Depth and memory size
-static const int tree_depth = 4;
+static const int tree_depth = 5;
 static const int arr_size = (1<<tree_depth)-1;
 
 typedef class KDTree {
@@ -41,18 +45,18 @@ public:
   UInt right_child(UInt parent);
   UInt get_parent(UInt child);
   // Tree actions
-  void reset_tree();
-  void insert_element(NodeChannel& in);
-  void remove_element(NodeChannel& in);
-  void search_element(NodeChannel& in, EvalChannel& out);
-  void dummy_insert(NodeChannel& in, EvalChannel& out);
-  void range_search(DataChannel& in, DataChannel& out);
-  void nearest_neighbor(NodeChannel& in, DataChannel& out);
-  void tree_traversal(NodeChannel& in, NodeChannel& out);
+  void reset_tree(EvalChannel& in);                           // in1
+  void insert_element(NodeChannel& in);                       // in2
+  void remove_element(NodeChannel& in);                       // in3
+  void search_element(NodeChannel& in, EvalChannel& out);     // in4 - out4
+  void dummy_insert(NodeChannel& in, EvalChannel& out);       // in5 - out5
+  void range_search(DataChannel& in, DataChannel& out);       // in6 - out6
+  void nearest_neighbor(NodeChannel& in, DataChannel& out);   // in7 - out7
+  void tree_traversal(NodeChannel& in, NodeChannel& out);     // in8 - out8
   // Simulation & debugging
   #ifndef __SYNTHESIS__
   void printNode(UInt position);
-  void printTree();
+  void printTree(EvalChannel& in);
   #endif
 } KDTree;
 
@@ -94,16 +98,20 @@ UInt KDTree::right_child(UInt parent){
 
 UInt KDTree::get_parent(UInt child){
   UInt parent = (child>>1);
-  parent -= ~child[0];
+  parent = parent - !child[0];
+  // std::cout << "[{" << child << " " << parent << "}]";
   return parent;
 }
 
-void KDTree::reset_tree(){
+void KDTree::reset_tree(EvalChannel& in){
   Node tmp;
   tmp.has_left = false;
   tmp.has_right = false;
   tmp.is_leaf = false;
-  mytree[0] = tmp;
+  if (in.available(1)){
+    Eval input = in.read();
+    mytree[0] = tmp;
+  }
 }
 
 void KDTree::insert_element(NodeChannel& in){
@@ -174,7 +182,11 @@ void KDTree::remove_element(NodeChannel& in){
       // Cases
       if (node.is_leaf && found){       // ---LEAF---
         if (position == 0){       // If root, reset
-          reset_tree();
+          Node tmp;
+          tmp.has_left = false;
+          tmp.has_right = false;
+          tmp.is_leaf = false;
+          mytree[0] = tmp;
         } else {                  // Else change pointer of parent
           par_node.has_right = (par_right) ? false : par_node.has_right ;
           par_node.has_left = (par_right) ? par_node.has_left : false;
@@ -366,7 +378,7 @@ void KDTree::tree_traversal(NodeChannel& in, NodeChannel& out){
     Node in_node = in.read();
     out.write(in_node);
   }
-};
+}
 
 #ifndef __SYNTHESIS__
 void KDTree::printNode(UInt position){
@@ -387,26 +399,29 @@ void KDTree::printNode(UInt position){
   }
 }
 
-void KDTree::printTree(){
-  for (int i=0; i<tree_depth; ++i){
-    std::cout << i << ": ";
-    for (int j=(1<<i)-1; j<(2<<i)-1; ++j){
-      std::cout << j << ": ";
-      Node par = (j==0) ? mytree[0] : mytree[get_parent(j)];
-      if (j==0){
-        printNode(j);
-      } else if (par.is_leaf){
-        std::cout << "Stop  \t";
-        mytree[j].is_leaf = true;
-      } else if (par.has_left && j==left_child(get_parent(j))){
-        printNode(j);
-      } else if (par.has_right && j==right_child(get_parent(j))){
-        printNode(j);
-      } else {
-        std::cout << "Stop  \t";
+void KDTree::printTree(EvalChannel& in){
+  if (in.available(1)){
+    Eval tmp = in.read();
+    for (int i=0; i<tree_depth; ++i){
+      std::cout << i << ": ";
+      for (int j=(1<<i)-1; j<(2<<i)-1; ++j){
+        std::cout << j << ": ";
+        Node par = (j==0) ? mytree[0] : mytree[get_parent(j)];
+        if (j==0){
+          printNode(j);
+        } else if (par.is_leaf){
+          std::cout << "Stop  \t";
+          mytree[j].is_leaf = true;
+        } else if (par.has_left && j==left_child(get_parent(j))){
+          printNode(j);
+        } else if (par.has_right && j==right_child(get_parent(j))){
+          printNode(j);
+        } else {
+          std::cout << "Stop  \t";
+        }
       }
+      std::cout << std::endl;
     }
-    std::cout << std::endl;
   }
 }
 #endif

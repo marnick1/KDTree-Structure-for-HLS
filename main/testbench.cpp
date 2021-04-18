@@ -11,7 +11,7 @@
 static const int limit = 128;
 
 // Test nodes
-static const int N = 6;
+static const int N = 10;
 
 CCS_MAIN(int argc, char* argv[]){
   // RNG Initialization
@@ -36,24 +36,30 @@ CCS_MAIN(int argc, char* argv[]){
   input.write(command);
   run(input, output, memory, stack_mem);
 
-  std::cout << std:: endl;
+  // Insert elements
+  command.opcode = op_insert;
+  Node data_in;
+  data_in.is_leaf = true;
+  data_in.has_left = false;
+  data_in.has_right = false;
+  for (int i=0; i<N; ++i){
+    for (int j=0; j<dims; ++j){
+      data_in.coords[j] = std::rand() % limit;
+    }
+    std::cout << "Inserting node {" << data_in.coords[0];
+    for (int j=1; j<dims; ++j){
+      std::cout << "," << data_in.coords[j];
+    }
+    std::cout << "}" << std::endl;
+    command.node = data_in;
+    input.write(command);
+    run(input, output, memory, stack_mem);
+  }
 
-  // // Insert elements
-  // opcode = 1;
-  // for (int i=0; i<N; ++i){
-  //   data_in.element[0].is_leaf = true;
-  //   data_in.element[0].has_left = false;
-  //   data_in.element[0].has_right = false;
-  //   for (int j=0; j<k; ++j){
-  //     data_in.element[0].coords[j] = std::rand() % limit;
-  //   }
-  //   std::cout << "Inserting node ";
-  //   printNode(data_in.element[0], 0);
-  //   std::cout << std::endl;
-  //   run<arr_size>(opcode, data_in, data_out, memory, stack_mem, arr_size);
-  // }
-  // // Printing Results
-  // printTree(memory);
+  // Print the tree
+  command.opcode = op_print;
+  input.write(command);
+  run(input, output, memory, stack_mem);
 
   // // Remove element
   // opcode = 2;

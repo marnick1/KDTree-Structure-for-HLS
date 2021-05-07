@@ -3,7 +3,7 @@
 
 #include "ac_integers.hpp"
 
-typedef class Stack {
+class Stack {
   private:
     UInt *memory;     // Stores node positions
     UInt rear;        // Stores memory positions
@@ -14,7 +14,7 @@ typedef class Stack {
     bool isFull();
     void push(UInt d_in);
     UInt pop();
-} Stack;
+};
 
 #ifdef __SYNTHESIS__
 Stack::Stack(UInt *mem, const UInt& memSize):

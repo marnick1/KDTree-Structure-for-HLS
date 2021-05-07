@@ -30,7 +30,7 @@ UInt dist(Node& a, Node& b){
 static const int tree_depth = 5;
 static const int arr_size = (1<<tree_depth)-1;
 
-typedef class KDTree {
+class KDTree {
 private:
   Node* mytree;     // Stores nodes
   UInt capacity;    // Stores mytree size
@@ -58,7 +58,7 @@ public:
   void printNode(UInt position);
   void printTree(EvalChannel& in);
   #endif
-} KDTree;
+};
 
 #ifdef __SYNTHESIS__
 KDTree::KDTree(Node* NodeMem, UInt* StackMem):

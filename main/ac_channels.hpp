@@ -6,7 +6,7 @@
 
 #include "node.hpp"
 
-typedef enum Action {
+enum Action {
   op_reset,
   op_insert,
   op_remove,
@@ -16,29 +16,29 @@ typedef enum Action {
   op_NearestNeighbor,
   op_Traversal,
   op_print
-} Action;
+};
 
-typedef struct Data{
+struct Data{
   UInt num;
   Node node;
-} Data;
+};
 
-typedef struct Eval{
+struct Eval{
   UInt num;
   bool flag;
-} Eval;
+};
 
-typedef struct In{
+struct In{
   Action opcode;
   UInt num;
   Node node;
-} In;
+};
 
-typedef struct Out{
+struct Out{
   UInt num;
   Node node;
   bool flag;
-} Out;
+};
 
 typedef ac_channel<Data> DataChannel;
 typedef ac_channel<Eval> EvalChannel;

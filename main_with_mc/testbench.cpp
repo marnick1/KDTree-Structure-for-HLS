@@ -2,9 +2,6 @@
 #include <cstdlib>
 #include <ctime>
 
-#include "ac_integers.hpp"
-#include "ac_channels.hpp"
-
 #include "space_partitioning.hpp"
 
 // Max value for node coordinates

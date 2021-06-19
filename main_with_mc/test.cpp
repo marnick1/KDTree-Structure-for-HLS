@@ -2,12 +2,25 @@
 #include <cstdlib>
 #include <ctime>
 
-#include "pseudo_multiport_interface.hpp"
+#include "multiport_memory.hpp"
+
+#include "mc_scverify.h"
 
 static const bool Debug = true;   // Debug messages to console
 static const int RUNS = 25;       // Number of test cases for each scenario
 static const int rng_limit = 100; // Upper limit for random number generator
-static const int scenario = 2;
+static const int scenario = 1;
+
+#pragma hls_design top
+template<typename T, int AddrBits, int Ports, int Banks>
+void CCS_BLOCK(run)(
+  ac_channel<Flit<MemoryIn<T,AddrBits>, Banks> > in[Ports],
+  ac_channel<Flit<MemoryOut<T>,         Banks> > out[Ports],
+  Memory<T,AddrBits,Banks> &memory
+){
+  static MultiportMemory<int, AddrBits, Ports, Banks> mc;
+  mc.run(in, out, memory);
+}
 
 // Ticketing order
 int new_ticket()
@@ -45,7 +58,8 @@ void results(
       }
       if (out_flag[i]){
         std::cout << "Ticket out: ";
-        std::cout << output[i].data.ticket;
+        std::cout << output[i].data.ticket << "\t";
+        std::cout << output[i].data.data;
       } else {
         std:: cout << "------------";
       }
@@ -63,8 +77,8 @@ CCS_MAIN(int argc, char* argv[]){
   static const int Banks = 4;
   static const int AddrBits = 14;
 
-  // Generate memory
-  Memory< int, AddrBits, Banks> mem;
+  // Generate memory and interface
+  Memory<int, AddrBits, Banks> mem;
 
   // Input & Output Channels
   ac_channel< Flit< MemoryIn< int, AddrBits>, Banks> > in[Ports];
@@ -94,7 +108,7 @@ CCS_MAIN(int argc, char* argv[]){
         in[j].write(input[j]);
       }
       // Memory interface
-      pseudo_multiport_memory<int, AddrBits, Ports, Banks>(in, out, mem);
+      run<int, AddrBits, Ports, Banks>(in, out, mem);
       // Retrieving Results
       for (int j=0; j<Ports; ++j) {
         output_valid[j] = out[j].nb_read(output[j]);
@@ -115,7 +129,7 @@ CCS_MAIN(int argc, char* argv[]){
         in[j].write(input[j]);
       }
       // Memory interface
-      pseudo_multiport_memory<int, AddrBits, Ports, Banks>(in, out, mem);
+      run<int, AddrBits, Ports, Banks>(in, out, mem);
       // Retrieving Results
       for (int j=0; j<Ports; ++j) {
         output_valid[j] = out[j].nb_read(output[j]);
@@ -144,7 +158,7 @@ CCS_MAIN(int argc, char* argv[]){
         }
       }
       // Memory interface
-      pseudo_multiport_memory<int, AddrBits, Ports, Banks>(in, out, mem);
+      run<int, AddrBits, Ports, Banks>(in, out, mem);
       // Retrieving Results
       for (int j=0; j<Ports; ++j) {
         output_valid[j] = out[j].nb_read(output[j]);
@@ -158,7 +172,7 @@ CCS_MAIN(int argc, char* argv[]){
         input_valid[j] = false;
       }
       // Memory interface
-      pseudo_multiport_memory<int, AddrBits, Ports, Banks>(in, out, mem);
+      run<int, AddrBits, Ports, Banks>(in, out, mem);
       // Retrieving Results
       for (int j=0; j<Ports; ++j) {
         output_valid[j] = out[j].nb_read(output[j]);
